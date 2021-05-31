@@ -191,6 +191,26 @@ public class BookController {
         return ResponseEntity.ok(new GetFavoritesResponse(user.getLikedBooks()));
     }
     
+    @GetMapping("/{bookId}/rateAverage")
+    public float getBookAverageRate(@PathVariable("bookId") String bookId) {
+    	
+    	Book book = null;
+    	try {
+    		book = bookService.getBookById(bookId);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	if (book.getReviews().isEmpty()){
+    		return 0;
+    	}
+    	
+    	float rateSum = 0;
+    	for(Review rv: book.getReviews()) {
+    		rateSum += rv.getRate();
+    	}
+    	return rateSum/book.getReviews().size();
+    }
     
 	@GetMapping(value = "/categories/{category_id}")
 	public BookOutput showBook(@PathVariable("category_id") int category_id) {
